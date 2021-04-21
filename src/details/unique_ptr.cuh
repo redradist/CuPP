@@ -58,18 +58,18 @@ class UniquePtr {
   T* ptr_ = nullptr;
 };
 
-template<typename T, typename ... TArgs,
-    typename = typename std::enable_if<not std::is_array<T>::value>::type,
-    typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
+template<typename T,
+         typename = typename std::enable_if<not std::is_array<T>::value>::type,
+         typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
 UniquePtr<T> makeUnique() {
   T *t;
   cudaMalloc(&t, sizeof(T));
   return UniquePtr<T>(t);
 }
 
-template<typename T, typename ... TArgs,
-    typename = typename std::enable_if<std::is_array<T>::value>::type,
-    typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
+template<typename T,
+         typename = typename std::enable_if<std::is_array<T>::value>::type,
+         typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
 UniquePtr<typename std::remove_extent<T>::type>
 makeUnique(size_t size) {
   using array_type = typename std::remove_extent<T>::type;

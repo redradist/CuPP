@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <cuda_runtime.h>
+#include "exceptions/cuda_exception.hpp"
 #include "details/unique_ptr.cuh"
 
 namespace cuda {
@@ -20,12 +21,18 @@ class Stream final {
 
   template <typename TDes, typename TSrc>
   void memcpyAsync(UniquePtr<TDes>& dest, const std::unique_ptr<TSrc>& src, std::size_t n) {
-    cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, stream_);
+    const cudaError_t err = cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, stream_);
+    if (cudaSuccess != err) {
+      throw CudaException(cudaGetErrorString(err));
+    }
   }
 
   template <typename TDes, typename TSrc>
   void memcpy(std::unique_ptr<TDes>& dest, const UniquePtr<TSrc>& src, std::size_t n) {
-    cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, stream_);
+    const cudaError_t err = cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, stream_);
+    if (cudaSuccess != err) {
+      throw CudaException(cudaGetErrorString(err));
+    }
   }
 
   void synchronize();

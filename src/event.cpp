@@ -12,8 +12,8 @@ Event::Event() {
   cudaEventCreate(&end_event_);
 }
 
-void Event::record(Stream& stream) {
-  cudaEventRecord(start_event_, stream);
+void Event::record() {
+  cudaEventRecord(start_event_);
 }
 
 void Event::stop() {

@@ -15,7 +15,7 @@ class Event {
   Event();
   ~Event();
 
-  void record(Stream& stream);
+  void record();
   void stop();
 
  private:
