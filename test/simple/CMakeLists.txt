@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.18)
 project(TestCuda C CXX CUDA)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
@@ -25,11 +25,13 @@ conan_cmake_install(PATH_OR_REFERENCE .
                     REMOTE conan-center
                     SETTINGS ${settings})
 
+find_package(CUDAToolkit REQUIRED)
 file(GLOB_RECURSE TEST_CUDA_APP_SOURCE_FILES *.c *.cpp *.cu *.cuh)
 
 set_source_files_properties(*.cu PROPERTIES LANGUAGE CUDA)
 set_source_files_properties(*.cuh PROPERTIES LANGUAGE CUDA)
 
 add_executable(${PROJECT_NAME} ${TEST_CUDA_APP_SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} Cudapp)
+target_include_directories(${PROJECT_NAME} PRIVATE "${CUDAToolkit_INCLUDE_DIRS}")
+target_link_libraries(${PROJECT_NAME} Cudapp CUDA::cudart CUDA::cuda_driver)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CUDA_ARCHITECTURES 30)

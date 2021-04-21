@@ -6,6 +6,7 @@
 #define CUDAPP_EVENT_HPP
 
 #include <cuda_runtime.h>
+#include "stream.cuh"
 
 namespace cuda {
 
@@ -14,7 +15,7 @@ class Event {
   Event();
   ~Event();
 
-  void record();
+  void record(Stream& stream);
   void stop();
 
  private:

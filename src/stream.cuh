@@ -5,20 +5,39 @@
 #ifndef CUDAPP_STREAM_CUH
 #define CUDAPP_STREAM_CUH
 
+#include <memory>
+#include <cuda_runtime.h>
+#include "details/unique_ptr.cuh"
+
 namespace cuda {
 
-class Stream {
+class Stream final {
  public:
-  class Context;
-
   Stream();
   ~Stream();
 
-  Context createContext();
+  operator cudaStream_t() const;
 
- protected:
-  cudaStream_t stream;
+  template <typename TDes, typename TSrc>
+  void memcpyAsync(UniquePtr<TDes>& dest, const std::unique_ptr<TSrc>& src, std::size_t n) {
+    cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, stream_);
+  }
+
+  template <typename TDes, typename TSrc>
+  void memcpy(std::unique_ptr<TDes>& dest, const UniquePtr<TSrc>& src, std::size_t n) {
+    cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, stream_);
+  }
+
+  void synchronize();
+
+ private:
+  cudaStream_t stream_;
 };
+
+inline
+Stream::operator cudaStream_t() const {
+  return stream_;
+}
 
 }
 

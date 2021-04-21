@@ -3,9 +3,6 @@
 #include <memory.cuh>
 #include <thread.cuh>
 
-__constant__ float sdaf[15000];
-__constant__ float sdaf2[15000];
-
 __global__
 void saxpy(int n, float a, float *x, float *y)
 {

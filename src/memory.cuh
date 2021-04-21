@@ -15,30 +15,6 @@
 
 namespace cuda {
 
-class Stream final {
- public:
-  Stream() {
-    cudaStreamCreate(&stream_);
-  }
-
-  ~Stream() {
-    cudaStreamDestroy(stream_);
-  }
-
-  template <typename TDes, typename TSrc>
-  void memcpyAsync(UniquePtr<TDes>& dest, const std::unique_ptr<TSrc>& src, std::size_t n) {
-    cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, stream_);
-  }
-
-  template <typename TDes, typename TSrc>
-  void memcpy(std::unique_ptr<TDes>& dest, const UniquePtr<TSrc>& src, std::size_t n) {
-    cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, stream_);
-  }
-
- private:
-  cudaStream_t stream_;
-};
-
 template <typename TDes, typename TSrc>
 void memcpy(UniquePtr<TDes>& dest, const std::unique_ptr<TSrc>& src, std::size_t n) {
   cudaMemcpy(dest.get(), src.get(), n, cudaMemcpyHostToDevice);

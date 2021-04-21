@@ -25,6 +25,7 @@ conan_cmake_install(PATH_OR_REFERENCE .
                     REMOTE conan-center
                     SETTINGS ${settings})
 
+find_package(CUDAToolkit REQUIRED)
 file(GLOB_RECURSE CUDAPP_SOURCE_FILES src/*.c src/*.cpp src/*.cu src/*.cuh)
 set(CUDAPP_INCLUDE_DIR src/)
 
@@ -35,6 +36,7 @@ add_library(${PROJECT_NAME} STATIC SHARED ${CUDAPP_SOURCE_FILES})
 target_include_directories(
         ${PROJECT_NAME}
         PUBLIC ${CUDAPP_INCLUDE_DIR}
-        PRIVATE ${CUDAPP_INCLUDE_DIR}/details)
+        PRIVATE ${CUDAPP_INCLUDE_DIR}/details ${CUDAToolkit_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} CUDA::cudart CUDA::cuda_driver)
 
 add_subdirectory(test)

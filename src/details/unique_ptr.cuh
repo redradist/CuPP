@@ -5,6 +5,10 @@
 #ifndef CUDA_UNIQUE_PTR_CUH
 #define CUDA_UNIQUE_PTR_CUH
 
+#include <memory>
+#include <atomic>
+#include <type_traits>
+
 namespace cuda {
 
 template<typename T>

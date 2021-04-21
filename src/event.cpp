@@ -3,6 +3,7 @@
 //
 
 #include "event.hpp"
+#include "stream.cuh"
 
 namespace cuda {
 
@@ -11,13 +12,13 @@ Event::Event() {
   cudaEventCreate(&end_event_);
 }
 
-void Event::record() {
-  cudaEventRecord(&start_event_);
+void Event::record(Stream& stream) {
+  cudaEventRecord(start_event_, stream);
 }
 
 void Event::stop() {
-  cudaEventRecord(&end_event_);
-  cudaEventSyncronize(&end_event_);
+  cudaEventRecord(end_event_);
+  cudaEventSynchronize(end_event_);
 }
 
 Event::~Event() {

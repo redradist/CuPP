@@ -7,11 +7,15 @@
 namespace cuda {
 
 Stream::Stream() {
-//  cudaStreamCreate(&stream);
+  cudaStreamCreate(&stream_);
 }
 
 Stream::~Stream() {
-//  cudaStreamDestroy(&stream);
+  cudaStreamDestroy(stream_);
+}
+
+void Stream::synchronize() {
+  cudaStreamSynchronize(stream_);
 }
 
 }
