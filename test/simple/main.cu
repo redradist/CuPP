@@ -1,7 +1,10 @@
 #include <cstdio>
 #include <cmath>
-#include "../../src/memory.cuh"
-#include "../../src/thread.cuh"
+#include <memory.cuh>
+#include <thread.cuh>
+
+__constant__ float sdaf[15000];
+__constant__ float sdaf2[15000];
 
 __global__
 void saxpy(int n, float a, float *x, float *y)
@@ -31,6 +34,14 @@ int main() {
 
   auto d_x = cuda::makeUnique<float[]>(N);
   auto d_y = cuda::makeUnique<float[]>(N);
+
+  cudaStream_t streamForGraph;
+  cudaError_t err = cudaStreamCreateWithFlags(&streamForGraph, cudaStreamNonBlocking);
+
+  cudaGraph_t graph2;
+  err = cudaGraphCreate(&graph2, 0);
+  int count;
+  err = cudaGetDeviceCount(&count);
 
   for (int i = 0; i < N; i++) {
     x[i] = 1.0f;

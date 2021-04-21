@@ -6,7 +6,6 @@
 #define TEST0_SPAN_HPP
 
 #include <limits>
-#include <gsl/>
 
 namespace cuda {
 
