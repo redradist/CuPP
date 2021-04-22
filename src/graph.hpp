@@ -9,21 +9,35 @@
 
 namespace cuda {
 
-class Graph {
+class Graph final {
  public:
+  Graph(unsigned int flags);
+  ~Graph();
+
   Graph(const Graph&) = delete;
   Graph& operator=(const Graph&) = delete;
 
   Graph(Graph&&) = default;
   Graph& operator=(Graph&&) = default;
 
-  void run() {
-
-  }
-
  private:
+  friend class Stream;
+
+  cudaGraph_t& handle();
+  const cudaGraph_t& handle() const;
+
   cudaGraph_t graph_;
 };
+
+inline
+cudaGraph_t& Graph::handle() {
+  return graph_;
+}
+
+inline
+const cudaGraph_t& Graph::handle() const {
+  return graph_;
+}
 
 }
 

@@ -22,14 +22,22 @@ class Event {
 
   ~Event();
 
-  operator cudaEvent_t() const;
-
  private:
+  friend class Stream;
+
+  cudaEvent_t& handle();
+  const cudaEvent_t& handle() const;
+
   cudaEvent_t event_;
 };
 
 inline
-Event::operator cudaEvent_t() const {
+cudaEvent_t& Event::handle() {
+  return event_;
+}
+
+inline
+const cudaEvent_t& Event::handle() const {
   return event_;
 }
 

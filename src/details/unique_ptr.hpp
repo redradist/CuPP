@@ -9,6 +9,7 @@
 #include <atomic>
 #include <functional>
 #include <type_traits>
+#include <gsl/pointers>
 #include "memory_types.hpp"
 
 namespace cuda {
@@ -65,7 +66,7 @@ class UniquePtr {
   }
 
  private:
-  T* ptr_ = nullptr;
+  gsl::owner<T*> ptr_ = nullptr;
   Deleter deleter_;
 };
 

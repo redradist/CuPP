@@ -66,12 +66,12 @@ void memcpyRawToHost(TDes* dest, const TSrc* src, std::size_t n) {
 
 template <typename TDes, typename TSrc>
 void memcpyAsync(UniquePtr<TDes>& dest, const std::unique_ptr<TSrc>& src, std::size_t n, const Stream& stream) {
-  THROW_IF_CUDA_ERROR(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, stream));
+  stream.memcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice);
 }
 
 template <typename TDes, typename TSrc>
-void memcpy(std::unique_ptr<TDes>& dest, const UniquePtr<TSrc>& src, std::size_t n, const Stream& stream) {
-  THROW_IF_CUDA_ERROR(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, stream));
+void memcpyAsync(std::unique_ptr<TDes>& dest, const UniquePtr<TSrc>& src, std::size_t n, const Stream& stream) {
+  stream.memcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost);
 }
 
 }
