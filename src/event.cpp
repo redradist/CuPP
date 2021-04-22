@@ -8,22 +8,11 @@
 namespace cuda {
 
 Event::Event() {
-  cudaEventCreate(&start_event_);
-  cudaEventCreate(&end_event_);
-}
-
-void Event::record() {
-  cudaEventRecord(start_event_);
-}
-
-void Event::stop() {
-  cudaEventRecord(end_event_);
-  cudaEventSynchronize(end_event_);
+  cudaEventCreate(&event_);
 }
 
 Event::~Event() {
-  cudaEventDestroy(start_event_);
-  cudaEventDestroy(end_event_);
+  cudaEventDestroy(event_);
 }
 
 }

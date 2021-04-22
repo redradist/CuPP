@@ -22,13 +22,16 @@ class Event {
 
   ~Event();
 
-  void record();
-  void stop();
+  operator cudaEvent_t() const;
 
  private:
-  cudaEvent_t start_event_;
-  cudaEvent_t end_event_;
+  cudaEvent_t event_;
 };
+
+inline
+Event::operator cudaEvent_t() const {
+  return event_;
+}
 
 }
 

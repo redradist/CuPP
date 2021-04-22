@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <atomic>
+#include "memory_types.hpp"
 
 namespace cuda {
 

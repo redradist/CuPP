@@ -7,15 +7,21 @@
 
 #include <memory>
 #include <atomic>
+#include <functional>
 #include <type_traits>
+#include "memory_types.hpp"
 
 namespace cuda {
 
 template<typename T>
+using DefaultUniquePtrDeleter = std::function<void(T*)>;
+
+template<typename T, typename Deleter = DefaultUniquePtrDeleter<T>>
 class UniquePtr {
  public:
-  UniquePtr(T* ptr)
-  : ptr_{ptr} {
+  UniquePtr(T* ptr, Deleter deleter)
+      : ptr_{ptr}
+      , deleter_{std::move(deleter)} {
   }
 
   UniquePtr(const UniquePtr&) = delete;
@@ -27,7 +33,7 @@ class UniquePtr {
 
   ~UniquePtr() {
     if (ptr_) {
-      cudaFree(ptr_);
+      deleter_(ptr_);
     }
   }
 
@@ -60,6 +66,7 @@ class UniquePtr {
 
  private:
   T* ptr_ = nullptr;
+  Deleter deleter_;
 };
 
 template<typename T,
@@ -68,18 +75,46 @@ template<typename T,
 UniquePtr<T> makeUnique() {
   T *t;
   cudaMalloc(&t, sizeof(T));
-  return UniquePtr<T>(t);
+  return UniquePtr<T>(t, [](T* ptr) {
+    cudaFree(ptr);
+  });
 }
 
 template<typename T,
          typename = typename std::enable_if<std::is_array<T>::value>::type,
          typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
 UniquePtr<typename std::remove_extent<T>::type>
-makeUnique(size_t size) {
-  using array_type = typename std::remove_extent<T>::type;
-  array_type *t;
-  cudaMalloc(&t, size * sizeof(array_type));
-  return UniquePtr<array_type>(t);
+makeUnique(const size_t size) {
+  using ArrayType = typename std::remove_extent<T>::type;
+  ArrayType *t;
+  cudaMalloc(&t, size * sizeof(ArrayType));
+  return UniquePtr<ArrayType>(t, [](ArrayType* ptr) {
+    cudaFree(ptr);
+  });
+}
+
+template<typename T,
+         typename = typename std::enable_if<not std::is_array<T>::value>::type,
+         typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
+UniquePtr<T> makeUniquePinned(const PinnedMemoryFlag flags) {
+  T *t;
+  cudaHostAlloc(&t, sizeof(T), static_cast<unsigned>(flags));
+  return UniquePtr<T>(t, [](T* ptr) {
+    cudaFreeHost(ptr);
+  });
+}
+
+template<typename T,
+         typename = typename std::enable_if<std::is_array<T>::value>::type,
+         typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
+UniquePtr<typename std::remove_extent<T>::type>
+makeUniquePinned(const size_t size, const PinnedMemoryFlag flags) {
+  using ArrayType = typename std::remove_extent<T>::type;
+  ArrayType *t;
+  cudaHostAlloc(&t, size * sizeof(ArrayType), static_cast<unsigned>(flags));
+  return UniquePtr<ArrayType>(t, [](ArrayType* ptr) {
+    cudaFreeHost(ptr);
+  });
 }
 
 }
