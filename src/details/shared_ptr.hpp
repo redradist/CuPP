@@ -26,9 +26,8 @@ class SharedPtr {
   }
 
   SharedPtr(SharedPtr&& shr_ptr)
-      : ptr_{shr_ptr.ptr_}
+      : ptr_{std::move(shr_ptr.ptr_)}
       , sync_block_{std::move(shr_ptr.sync_block_)} {
-    shr_ptr.ptr_ = nullptr;
   }
 
   ~SharedPtr() {
@@ -44,6 +43,11 @@ class SharedPtr {
     ptr_ = shr_ptr.ptr_;
     sync_block_ = shr_ptr.sync_block_;
     sync_block_->strong_.fetch_add(1, std::memory_order_acq_rel);
+  }
+
+  SharedPtr& operator=(SharedPtr&& shr_ptr) {
+    ptr_ = std::move(shr_ptr.ptr_);
+    sync_block_ = std::move(shr_ptr.sync_block_);
   }
 
   explicit operator bool() const {
@@ -76,7 +80,7 @@ class SharedPtr {
   std::shared_ptr<SyncBlock> sync_block_;
 };
 
-template<typename T, typename ... TArgs,
+template<typename T,
          typename = typename std::enable_if<not std::is_array<T>::value>::type,
          typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
 SharedPtr<T> makeShared() {
@@ -85,7 +89,7 @@ SharedPtr<T> makeShared() {
   return SharedPtr<T>(t);
 }
 
-template<typename T, typename ... TArgs,
+template<typename T,
          typename = typename std::enable_if<std::is_array<T>::value>::type,
          typename = typename std::enable_if<std::is_trivially_constructible<T>::value>>
 SharedPtr<typename std::remove_extent<T>::type>

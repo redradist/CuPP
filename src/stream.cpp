@@ -2,7 +2,7 @@
 // Created by redra on 14.04.21.
 //
 
-#include "stream.cuh"
+#include "stream.hpp"
 
 namespace cuda {
 

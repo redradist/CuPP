@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <cmath>
-#include <memory.cuh>
+#include <memory.hpp>
 #include <thread.cuh>
 #include <cudnn.h>
 #include <vector>

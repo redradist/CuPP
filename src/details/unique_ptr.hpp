@@ -18,6 +18,8 @@ class UniquePtr {
   : ptr_{ptr} {
   }
 
+  UniquePtr(const UniquePtr&) = delete;
+
   UniquePtr(UniquePtr&& unq_ptr)
       : ptr_{unq_ptr.ptr_} {
     unq_ptr.ptr_ = nullptr;
@@ -28,6 +30,8 @@ class UniquePtr {
       cudaFree(ptr_);
     }
   }
+
+  UniquePtr& operator=(const UniquePtr&) = delete;
 
   UniquePtr& operator=(UniquePtr&& unq_ptr) {
     ptr_ = unq_ptr.ptr_;

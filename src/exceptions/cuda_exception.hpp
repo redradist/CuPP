@@ -24,6 +24,10 @@ class CudaException : public std::exception {
   std::string msg_;
 };
 
+#define THROW_IF_CUDA_ERROR(err) \
+  if (cudaSuccess != err) { \
+    throw CudaException(cudaGetErrorString(err)); \
+  }
 }
 
 #endif //CUDAPP_CUDA_EXCEPTION_HPP

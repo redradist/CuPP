@@ -5,6 +5,8 @@
 #ifndef TEST0_GRAPH_HPP
 #define TEST0_GRAPH_HPP
 
+#include <cuda_runtime.h>
+
 namespace cuda {
 
 class Graph {
