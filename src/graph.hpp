@@ -11,6 +11,12 @@ namespace cuda {
 
 class Graph {
  public:
+  Graph(const Graph&) = delete;
+  Graph& operator=(const Graph&) = delete;
+
+  Graph(Graph&&) = default;
+  Graph& operator=(Graph&&) = default;
+
   void run() {
 
   }

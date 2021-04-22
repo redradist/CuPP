@@ -6,13 +6,20 @@
 #define CUDAPP_EVENT_HPP
 
 #include <cuda_runtime.h>
-#include "stream.cuh"
+#include "stream.hpp"
 
 namespace cuda {
 
 class Event {
  public:
   Event();
+
+  Event(const Event&) = delete;
+  Event& operator=(const Event&) = delete;
+
+  Event(Event&&) = default;
+  Event& operator=(Event&&) = default;
+
   ~Event();
 
   void record();

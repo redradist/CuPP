@@ -13,6 +13,12 @@ class PinnedMemory {
  public:
   PinnedMemory() {
   }
+
+  PinnedMemory(const PinnedMemory&) = delete;
+  PinnedMemory& operator=(const PinnedMemory&) = delete;
+
+  PinnedMemory(PinnedMemory&&) = default;
+  PinnedMemory& operator=(PinnedMemory&&) = default;
 };
 
 }

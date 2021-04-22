@@ -3,7 +3,7 @@
 //
 
 #include "event.hpp"
-#include "stream.cuh"
+#include "stream.hpp"
 
 namespace cuda {
 
