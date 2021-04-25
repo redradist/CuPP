@@ -15,12 +15,8 @@ endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-conan_cmake_configure(REQUIRES ms-gsl/3.1.0
-                      GENERATORS cmake_find_package)
-
 conan_cmake_autodetect(settings)
-
-conan_cmake_install(PATH_OR_REFERENCE .
+conan_cmake_install(PATH_OR_REFERENCE ${CMAKE_CURRENT_LIST_DIR}
                     BUILD missing
                     REMOTE conan-center
                     SETTINGS ${settings})

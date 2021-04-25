@@ -5,13 +5,18 @@
 #ifndef TEST0_GRAPH_HPP
 #define TEST0_GRAPH_HPP
 
+#include <memory>
+
 #include <cuda_runtime.h>
 
 namespace cuda {
 
 class Graph final {
  public:
-  Graph(unsigned int flags);
+  class HostNode;
+  class KernelNode;
+
+  explicit Graph(unsigned int flags = 0);
   ~Graph();
 
   Graph(const Graph&) = delete;
@@ -19,6 +24,9 @@ class Graph final {
 
   Graph(Graph&&) = default;
   Graph& operator=(Graph&&) = default;
+
+  std::shared_ptr<HostNode> createHostNode();
+  std::shared_ptr<KernelNode> createKernelNode();
 
  private:
   friend class Stream;

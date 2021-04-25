@@ -12,6 +12,14 @@ Stream::Stream() {
   THROW_IF_CUDA_ERROR(cudaStreamCreate(&stream_));
 }
 
+Stream::Stream(unsigned int flags) {
+  THROW_IF_CUDA_ERROR(cudaStreamCreateWithFlags(&stream_, flags));
+}
+
+Stream::Stream(unsigned int flags, int priority) {
+  THROW_IF_CUDA_ERROR(cudaStreamCreateWithPriority(&stream_, flags, priority));
+}
+
 Stream::~Stream() {
   cudaStreamDestroy(stream_);
 }
@@ -34,6 +42,22 @@ void Stream::waitEvent(Event& event, unsigned int flags) {
 
 void Stream::synchronize() {
   THROW_IF_CUDA_ERROR(cudaStreamSynchronize(stream_));
+}
+
+std::pair<StreamCaptureStatus, Stream::CaptureSequenceId>
+Stream::getCaptureInfo() {
+  cudaStreamCaptureStatus captureStatus;
+  unsigned long long id;
+  THROW_IF_CUDA_ERROR(cudaStreamGetCaptureInfo(stream_, &captureStatus, &id));
+  return {static_cast<StreamCaptureStatus>(captureStatus), id};
+}
+
+Stream::CaptureFlags
+Stream::getFlags() {
+  cudaStreamCaptureStatus captureStatus;
+  unsigned int flags;
+  THROW_IF_CUDA_ERROR(cudaStreamGetFlags(stream_, &flags));
+  return flags;
 }
 
 }

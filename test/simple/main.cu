@@ -2,6 +2,7 @@
 #include <cmath>
 #include <memory.hpp>
 #include <thread.cuh>
+#include <graph.hpp>
 
 __global__
 void saxpy(int n, float a, float *x, float *y)
@@ -25,6 +26,9 @@ class SaxpyKernel {
 };
 
 int main() {
+  auto graph = cuda::Graph{};
+  auto kernelNode = graph.createKernelNode();
+
   int N = 1 << 20;
   auto x = std::make_unique<float[]>(N);
   auto y = std::make_unique<float[]>(N);

@@ -27,12 +27,21 @@ enum class MemAttachMode : unsigned {
   MemAttachSingle = 4,
 };
 
+enum class StreamCaptureStatus : int {
+  StatusNone        = 0, /**< Stream is not capturing */
+  StatusActive      = 1, /**< Stream is actively capturing */
+  StatusInvalidated = 2, /**< Stream is part of a capture sequence that */
+};
 
 class Stream final {
  public:
   using StreamCallback = void(Stream& stream, cudaError_t status, void *userData);
+  using CaptureSequenceId = unsigned long long;
+  using CaptureFlags = unsigned int;
 
   Stream();
+  explicit Stream(unsigned int flags);
+  Stream(unsigned int flags, int priority);
 
   Stream(const Stream&) = delete;
   Stream& operator=(const Stream&) = delete;
@@ -55,6 +64,9 @@ class Stream final {
   void endCapture(Graph& graph);
   void waitEvent(Event& event, unsigned int flags);
   void synchronize();
+  std::pair<StreamCaptureStatus, CaptureSequenceId>
+  getCaptureInfo();
+  CaptureFlags getFlags();
 
  private:
   cudaStream_t stream_;

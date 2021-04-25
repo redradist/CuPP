@@ -7,13 +7,14 @@
 
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace cuda {
 
 class CudaException : public std::exception {
  public:
   explicit CudaException(std::string msg)
-    : msg_{msg} {
+    : msg_{std::move(msg)} {
   }
 
   const char* what() const noexcept override {
