@@ -5,12 +5,12 @@
 #ifndef CUDAPP_SRC_GRAPH_KERNEL_NODE_HPP_
 #define CUDAPP_SRC_GRAPH_KERNEL_NODE_HPP_
 
-#include <memory>
 #include "graph.hpp"
+#include "graph_node.hpp"
 
 namespace cuda {
 
-class Graph::KernelNode {
+class Graph::KernelNode : public Graph::Node {
  protected:
   struct this_is_private;
 
@@ -18,7 +18,7 @@ class Graph::KernelNode {
   explicit KernelNode(const this_is_private &,
                       cudaGraph_t graph,
                       cudaKernelNodeParams& nodeParams);
-  ~KernelNode();
+  ~KernelNode() override;
 
   KernelNode(const KernelNode&) = delete;
   KernelNode& operator=(const KernelNode&) = delete;

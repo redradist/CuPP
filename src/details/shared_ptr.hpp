@@ -12,73 +12,27 @@
 namespace cuda {
 
 template<typename T>
-class SharedPtr {
+ class SharedPtr : protected std::shared_ptr<T> {
  public:
-  SharedPtr(T* ptr)
-  : ptr_{ptr}
-  , sync_block_{std::make_shared<SyncBlock>()} {
-    sync_block_->strong_.fetch_add(1, std::memory_order_acq_rel);
+  explicit SharedPtr(T* ptr)
+    : std::shared_ptr<T>{ptr, CudaDeleter<T>{}} {
   }
 
-  SharedPtr(const SharedPtr& shr_ptr)
-      : ptr_{shr_ptr.ptr_}
-      , sync_block_{shr_ptr.sync_block_} {
-    sync_block_->strong_.fetch_add(1, std::memory_order_acq_rel);
-  }
-
-  SharedPtr(SharedPtr&& shr_ptr)
-      : ptr_{std::move(shr_ptr.ptr_)}
-      , sync_block_{std::move(shr_ptr.sync_block_)} {
-  }
-
-  ~SharedPtr() {
-    sync_block_->strong_.fetch_sub(1, std::memory_order_acq_rel);
-    if (0 == sync_block_->strong_.load(std::memory_order_acquire)) {
-      if (ptr_) {
-        cudaFree(ptr_);
-      }
-    }
-  }
-
-  SharedPtr& operator=(const SharedPtr& shr_ptr) {
-    ptr_ = shr_ptr.ptr_;
-    sync_block_ = shr_ptr.sync_block_;
-    sync_block_->strong_.fetch_add(1, std::memory_order_acq_rel);
-  }
-
-  SharedPtr& operator=(SharedPtr&& shr_ptr) {
-    ptr_ = std::move(shr_ptr.ptr_);
-    sync_block_ = std::move(shr_ptr.sync_block_);
-  }
-
-  explicit operator bool() const {
-    return ptr_ != nullptr;
-  }
-
-  T& operator*() {
-    return *ptr_;
-  }
-
-  T* operator->() {
-    return ptr_;
-  }
-
-  T& operator[](ptrdiff_t idx) const {
-    return ptr_[idx];
-  }
-
-  T* get() const {
-    return ptr_;
-  }
-
- private:
-  struct SyncBlock {
-    std::atomic<ptrdiff_t> strong_{0};
-    std::atomic<ptrdiff_t> weak_{0};
-  };
-
-  T* ptr_ = nullptr;
-  std::shared_ptr<SyncBlock> sync_block_;
+   using std::shared_ptr<T>::operator=;
+   using std::shared_ptr<T>::reset;
+   using std::shared_ptr<T>::swap;
+   using std::shared_ptr<T>::get;
+   using std::shared_ptr<T>::operator*;
+   using std::shared_ptr<T>::operator->;
+#if __cplusplus >= 201703L
+   using std::shared_ptr<T>::operator[];
+#endif
+   using std::shared_ptr<T>::use_count;
+#if __cplusplus > 201703L
+   using std::shared_ptr<T>::unique;
+#endif
+   using std::shared_ptr<T>::operator bool;
+   using std::shared_ptr<T>::owner_before;
 };
 
 template<typename T,

@@ -6,10 +6,11 @@
 #define CUDAPP_SRC_GRAPH_HOST_NODE_HPP_
 
 #include "graph.hpp"
+#include "graph_node.hpp"
 
 namespace cuda {
 
-class Graph::HostNode {
+class Graph::HostNode : public Graph::Node {
  protected:
   struct this_is_private;
 
@@ -17,7 +18,7 @@ class Graph::HostNode {
   explicit HostNode(const this_is_private &,
                     cudaGraph_t graph,
                     cudaHostNodeParams& nodeParams);
-  ~HostNode();
+  ~HostNode() override;
 
   HostNode(const HostNode&) = delete;
   HostNode& operator=(const HostNode&) = delete;

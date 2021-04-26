@@ -26,15 +26,13 @@ class SaxpyKernel {
 };
 
 int main() {
-  auto graph = cuda::Graph{};
-  auto kernelNode = graph.createKernelNode();
-
   int N = 1 << 20;
   auto x = std::make_unique<float[]>(N);
   auto y = std::make_unique<float[]>(N);
 
   auto d_x = cuda::makeUnique<float[]>(N);
   auto d_y = cuda::makeUnique<float[]>(N);
+  auto d_z = cuda::makeShared<float[]>(N);
 
   cudaStream_t streamForGraph;
   cudaError_t err = cudaStreamCreateWithFlags(&streamForGraph, cudaStreamNonBlocking);

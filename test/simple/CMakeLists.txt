@@ -14,5 +14,5 @@ set_source_files_properties(*.cuh PROPERTIES LANGUAGE CUDA)
 
 add_executable(${PROJECT_NAME} ${TEST_CUDA_APP_SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE "${CUDAToolkit_INCLUDE_DIRS}")
-target_link_libraries(${PROJECT_NAME} Cudapp CUDA::cudart CUDA::cuda_driver)
+target_link_libraries(${PROJECT_NAME} CuPP CUDA::cudart CUDA::cuda_driver)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CUDA_ARCHITECTURES 30)

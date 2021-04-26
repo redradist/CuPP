@@ -74,17 +74,17 @@ class Stream final {
 
 template <typename TDes, typename TSrc>
 void Stream::memcpyAsync(UniquePtr<TDes>& dest, const std::unique_ptr<TSrc>& src, std::size_t n) {
-  THROW_IF_CUDA_ERROR(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, stream_));
+  throwIfCudaError(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, stream_));
 }
 
 template <typename TDes, typename TSrc>
 void Stream::memcpyAsync(std::unique_ptr<TDes>& dest, const UniquePtr<TSrc>& src, std::size_t n) {
-  THROW_IF_CUDA_ERROR(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, stream_));
+  throwIfCudaError(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, stream_));
 }
 
 template <typename T>
 void Stream::attachMemAsync(T *devPtr, size_t length, MemAttachMode flags) {
-  THROW_IF_CUDA_ERROR(cudaStreamAttachMemAsync(stream_, devPtr, length, static_cast<unsigned>(flags)));
+  throwIfCudaError(cudaStreamAttachMemAsync(stream_, devPtr, length, static_cast<unsigned>(flags)));
 }
 
 }

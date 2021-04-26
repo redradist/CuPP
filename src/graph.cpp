@@ -10,7 +10,11 @@
 namespace cuda {
 
 Graph::Graph(unsigned int flags) {
-  THROW_IF_CUDA_ERROR(cudaGraphCreate(&graph_, flags));
+  throwIfCudaError(cudaGraphCreate(&graph_, flags));
+}
+
+Graph::~Graph() {
+  cudaGraphDestroy(graph_);
 }
 
 std::shared_ptr<Graph::HostNode>
@@ -31,8 +35,9 @@ Graph::createKernelNode() {
   );
 }
 
-Graph::~Graph() {
-  cudaGraphDestroy(graph_);
+void Graph::addDependencies(std::shared_ptr<Graph::Node>& leftNode,
+                            std::shared_ptr<Graph::Node>& rightNode) {
+  throwIfCudaError(cudaGraphAddDependencies(graph_, &leftNode->node(), &rightNode->node(), 1));
 }
 
 }

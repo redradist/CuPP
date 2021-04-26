@@ -13,6 +13,7 @@ namespace cuda {
 
 class Graph final {
  public:
+  class Node;
   class HostNode;
   class KernelNode;
 
@@ -27,6 +28,9 @@ class Graph final {
 
   std::shared_ptr<HostNode> createHostNode();
   std::shared_ptr<KernelNode> createKernelNode();
+
+  void addDependencies(std::shared_ptr<Graph::Node>& leftNode,
+                       std::shared_ptr<Graph::Node>& rightNode);
 
  private:
   friend class Stream;
