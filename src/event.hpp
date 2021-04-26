@@ -10,9 +10,12 @@
 
 namespace cuda {
 
-class Event {
+class Stream;
+
+class Event final {
  public:
   Event();
+  explicit Event(unsigned int flags);
 
   Event(const Event&) = delete;
   Event& operator=(const Event&) = delete;
@@ -22,24 +25,17 @@ class Event {
 
   ~Event();
 
+  void query();
+  void record();
+  void record(Stream& stream);
+  void synchronize();
+  static float elapsedTime(Event& start, Event& end);
+
  private:
   friend class Stream;
 
-  cudaEvent_t& handle();
-  const cudaEvent_t& handle() const;
-
   cudaEvent_t event_;
 };
-
-inline
-cudaEvent_t& Event::handle() {
-  return event_;
-}
-
-inline
-const cudaEvent_t& Event::handle() const {
-  return event_;
-}
 
 }
 

@@ -72,6 +72,8 @@ class Stream final {
   CaptureFlags getFlags();
 
  private:
+  friend class Event;
+
   struct StreamUserData {
     Stream* stream_;
     StreamCallback callback_;

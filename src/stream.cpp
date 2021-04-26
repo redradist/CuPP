@@ -33,7 +33,7 @@ void Stream::endCapture(Graph& graph) {
 }
 
 void Stream::waitEvent(Event& event, unsigned int flags) {
-  throwIfCudaError(cudaStreamWaitEvent(stream_, event.handle(), flags));
+  throwIfCudaError(cudaStreamWaitEvent(stream_, event.event_, flags));
 }
 
 void Stream::onStreamEvent(cudaStream_t stream, cudaError_t status, void *userData) {
