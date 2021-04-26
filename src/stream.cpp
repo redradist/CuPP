@@ -36,12 +36,30 @@ void Stream::waitEvent(Event& event, unsigned int flags) {
   throwIfCudaError(cudaStreamWaitEvent(stream_, event.handle(), flags));
 }
 
-//void Stream::addCallback(StreamCallback callback, void *userData, unsigned int flags) {
-//  throwIfCudaError(cudaStreamAddCallback(stream_, event.handle(), userData, flags));
-//}
+void Stream::onStreamEvent(cudaStream_t stream, cudaError_t status, void *userData) {
+  auto streamUserData = reinterpret_cast<StreamUserData*>(userData);
+  streamUserData->callback_(*streamUserData->stream_, status, streamUserData->user_data_);
+}
+
+void Stream::addCallback(const StreamCallback& callback, void *userData, unsigned int flags) {
+  auto streamUserData = std::make_unique<StreamUserData>(this, callback, userData);
+  throwIfCudaError(cudaStreamAddCallback(stream_, &Stream::onStreamEvent, streamUserData.get(), flags));
+  users_data_.push_back(std::move(streamUserData));
+}
+
+void Stream::query() {
+  throwIfCudaError(cudaStreamQuery(stream_));
+}
 
 void Stream::synchronize() {
   throwIfCudaError(cudaStreamSynchronize(stream_));
+}
+
+StreamCaptureStatus
+Stream::isCapturing() {
+  cudaStreamCaptureStatus captureStatus;
+  throwIfCudaError(cudaStreamIsCapturing(stream_, &captureStatus));
+  return static_cast<StreamCaptureStatus>(captureStatus);
 }
 
 std::pair<StreamCaptureStatus, Stream::CaptureSequenceId>

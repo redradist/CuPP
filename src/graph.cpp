@@ -35,8 +35,8 @@ Graph::createKernelNode() {
   );
 }
 
-void Graph::addDependencies(std::shared_ptr<Graph::Node>& leftNode,
-                            std::shared_ptr<Graph::Node>& rightNode) {
+void Graph::addDependency(std::shared_ptr<Graph::Node>& leftNode,
+                          std::shared_ptr<Graph::Node>& rightNode) {
   throwIfCudaError(cudaGraphAddDependencies(graph_, &leftNode->node(), &rightNode->node(), 1));
 }
 

@@ -7,6 +7,8 @@
 
 #include <memory>
 #include <cuda_runtime.h>
+#include <utility>
+#include <vector>
 #include "exceptions/cuda_exception.hpp"
 #include "details/unique_ptr.hpp"
 
@@ -35,7 +37,7 @@ enum class StreamCaptureStatus : int {
 
 class Stream final {
  public:
-  using StreamCallback = void(Stream& stream, cudaError_t status, void *userData);
+  using StreamCallback = std::function<void(Stream& stream, cudaError_t status, void *userData)>;
   using CaptureSequenceId = unsigned long long;
   using CaptureFlags = unsigned int;
 
@@ -53,23 +55,39 @@ class Stream final {
 
   template <typename TDes, typename TSrc>
   void memcpyAsync(UniquePtr<TDes>& dest, const std::unique_ptr<TSrc>& src, std::size_t n);
-
   template <typename TDes, typename TSrc>
   void memcpyAsync(std::unique_ptr<TDes>& dest, const UniquePtr<TSrc>& src, std::size_t n);
-
   template <typename T>
   void attachMemAsync(T *devPtr, size_t length = 0, MemAttachMode flags = MemAttachMode::MemAttachSingle);
 
   void beginCapture(StreamCaptureMode mode);
   void endCapture(Graph& graph);
   void waitEvent(Event& event, unsigned int flags);
+  void addCallback(const StreamCallback& callback, void *userData, unsigned int flags);
+  void query();
   void synchronize();
+  StreamCaptureStatus isCapturing();
   std::pair<StreamCaptureStatus, CaptureSequenceId>
   getCaptureInfo();
   CaptureFlags getFlags();
 
  private:
+  struct StreamUserData {
+    Stream* stream_;
+    StreamCallback callback_;
+    void* user_data_;
+
+    StreamUserData(Stream* stream, StreamCallback callback, void* userData)
+      : stream_{stream}
+      , callback_{std::move(callback)}
+      , user_data_{userData} {
+    }
+  };
+
+  static void onStreamEvent(cudaStream_t stream, cudaError_t status, void *userData);
+
   cudaStream_t stream_;
+  std::vector<std::unique_ptr<StreamUserData>> users_data_;
 };
 
 template <typename TDes, typename TSrc>

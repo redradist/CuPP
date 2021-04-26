@@ -29,8 +29,8 @@ class Graph final {
   std::shared_ptr<HostNode> createHostNode();
   std::shared_ptr<KernelNode> createKernelNode();
 
-  void addDependencies(std::shared_ptr<Graph::Node>& leftNode,
-                       std::shared_ptr<Graph::Node>& rightNode);
+  void addDependency(std::shared_ptr<Graph::Node>& leftNode,
+                     std::shared_ptr<Graph::Node>& rightNode);
 
  private:
   friend class Stream;
