@@ -16,6 +16,7 @@ class Graph final {
   class Node;
   class HostNode;
   class KernelNode;
+  class GraphNode;
 
   explicit Graph(unsigned int flags = 0);
   ~Graph();
@@ -28,6 +29,7 @@ class Graph final {
 
   std::shared_ptr<HostNode> createHostNode();
   std::shared_ptr<KernelNode> createKernelNode();
+  std::shared_ptr<GraphNode> createGraphNode(Graph& graph);
 
   void addDependency(std::shared_ptr<Graph::Node>& leftNode,
                      std::shared_ptr<Graph::Node>& rightNode);

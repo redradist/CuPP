@@ -32,8 +32,6 @@ class Graph::KernelNode : public Graph::Node {
   struct this_is_private {
     explicit this_is_private() = default;
   };
-
-  cudaGraphNode_t graph_node_;
 };
 
 }

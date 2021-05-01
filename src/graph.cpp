@@ -5,6 +5,7 @@
 #include "graph.hpp"
 #include "graph_host_node.hpp"
 #include "graph_kernel_node.hpp"
+#include "graph_graph_node.hpp"
 #include "exceptions/cuda_exception.hpp"
 
 namespace cuda {
@@ -32,6 +33,15 @@ Graph::createKernelNode() {
   return std::make_shared<KernelNode>(
       KernelNode::this_is_private{},
       graph_, nodeParams
+  );
+}
+
+std::shared_ptr<Graph::GraphNode>
+Graph::createGraphNode(Graph& graph) {
+  cudaKernelNodeParams nodeParams;
+  return std::make_shared<GraphNode>(
+      GraphNode::this_is_private{},
+      graph_, graph
   );
 }
 
