@@ -7,8 +7,12 @@
 
 namespace cuda {
 
+namespace kernel {
+
 __device__ void barrier() {
   __syncthreads();
+}
+
 }
 
 }

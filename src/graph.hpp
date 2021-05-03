@@ -27,8 +27,8 @@ class Graph final {
   Graph(Graph&&) = default;
   Graph& operator=(Graph&&) = default;
 
-  std::shared_ptr<HostNode> createHostNode();
-  std::shared_ptr<KernelNode> createKernelNode();
+  std::shared_ptr<HostNode> createHostNode(cudaHostNodeParams& nodeParams);
+  std::shared_ptr<KernelNode> createKernelNode(cudaKernelNodeParams& nodeParams);
   std::shared_ptr<GraphNode> createGraphNode(Graph& graph);
 
   void addDependency(std::shared_ptr<Graph::Node>& leftNode,

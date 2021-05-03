@@ -12,7 +12,7 @@ void saxpy(int n, float a, float *x, float *y)
     y[i] = a*x[i] + y[i];
   }
 
-  cuda::barrier();
+  cuda::kernel::barrier();
 }
 
 class SaxpyKernel {
@@ -34,13 +34,26 @@ int main() {
   auto d_y = cuda::makeUnique<float[]>(N);
   auto d_z = cuda::makeShared<float[]>(N);
 
-  cudaStream_t streamForGraph;
-  cudaError_t err = cudaStreamCreateWithFlags(&streamForGraph, cudaStreamNonBlocking);
+  auto stream = cuda::Stream{cudaStreamNonBlocking};
 
-  cudaGraph_t graph2;
-  err = cudaGraphCreate(&graph2, 0);
+  auto graph = cuda::Graph{};
+  cudaKernelNodeParams kernelNodeParams;
+  int n;
+  float a;
+  float *xx = reinterpret_cast<float *>(0x235215);
+  float *yy = reinterpret_cast<float *>(0x233567);
+  int blocks = 10;
+  int threads = 10;
+  kernelNodeParams.func = reinterpret_cast<void *>(&saxpy);
+  kernelNodeParams.gridDim = dim3(blocks, 1, 1);
+  kernelNodeParams.blockDim = dim3(threads, 1, 1);
+  kernelNodeParams.sharedMemBytes = 0;
+  void* kernelArgs[4] = { &n, &a, xx, yy };
+  kernelNodeParams.kernelParams = kernelArgs;
+  kernelNodeParams.extra = nullptr;
+  auto kernelNode = graph.createKernelNode(kernelNodeParams);
   int count;
-  err = cudaGetDeviceCount(&count);
+  cudaGetDeviceCount(&count);
 
   for (int i = 0; i < N; i++) {
     x[i] = 1.0f;

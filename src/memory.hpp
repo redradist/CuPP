@@ -9,7 +9,7 @@
 #if __has_include(<span>)
 #include <span>
 #endif
-#include "span.cuh"
+#include "span.hpp"
 #include "details/shared_ptr.hpp"
 #include "details/unique_ptr.hpp"
 #include "exceptions/cuda_exception.hpp"

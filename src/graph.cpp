@@ -19,8 +19,7 @@ Graph::~Graph() {
 }
 
 std::shared_ptr<Graph::HostNode>
-Graph::createHostNode() {
-  cudaHostNodeParams nodeParams;
+Graph::createHostNode(cudaHostNodeParams& nodeParams) {
   return std::make_shared<HostNode>(
       HostNode::this_is_private{},
       graph_, nodeParams
@@ -28,8 +27,7 @@ Graph::createHostNode() {
 }
 
 std::shared_ptr<Graph::KernelNode>
-Graph::createKernelNode() {
-  cudaKernelNodeParams nodeParams;
+Graph::createKernelNode(cudaKernelNodeParams& nodeParams) {
   return std::make_shared<KernelNode>(
       KernelNode::this_is_private{},
       graph_, nodeParams
@@ -38,7 +36,6 @@ Graph::createKernelNode() {
 
 std::shared_ptr<Graph::GraphNode>
 Graph::createGraphNode(Graph& graph) {
-  cudaKernelNodeParams nodeParams;
   return std::make_shared<GraphNode>(
       GraphNode::this_is_private{},
       graph_, graph
