@@ -20,7 +20,7 @@ class Resource {
   Resource& operator=(Resource&&) = delete;
 
   template<typename ... TArgs>
-  void call(cudaError_t(*cudaFunction)(TArgs...), TArgs&&... args) {
+  void call(cudaError_t(*cudaFunction)(TResource, TArgs...), TArgs&&... args) {
     throwIfCudaError(cudaFunction(this->handle_, std::forward<TArgs>(args)...));
   }
 
