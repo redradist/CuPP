@@ -3,6 +3,8 @@
 #include <memory.hpp>
 #include <thread.cuh>
 #include <graph.hpp>
+#include <gsl/pointers>
+#include <type_traits>
 
 __global__
 void saxpy(int n, float a, float *x, float *y)
@@ -25,7 +27,26 @@ class SaxpyKernel {
   }
 };
 
+template <typename T>
+class DevicePointer : gsl::not_null<T> {
+ public:
+  static_assert(std::is_pointer<T>::value, "T should be a pointer type");
+  using gsl::not_null<T>::not_null;
+  template<typename U>
+  DevicePointer<U*> cast() const noexcept {
+    static_assert(!std::is_pointer<U>::value, "U should not be a pointer type");
+    return DevicePointer<U*>{static_cast<U*>(gsl::not_null<T>::get())};
+  }
+  T get() const noexcept {
+    return gsl::not_null<T>::get();
+  }
+};
+
 int main() {
+  auto devTensorA = DevicePointer<void*>{(void*)24};
+  auto devTypedTensorA = devTensorA.cast<int>();
+  auto rawTensorA = devTypedTensorA.get();
+
   int N = 1 << 20;
   auto x = std::make_unique<float[]>(N);
   auto y = std::make_unique<float[]>(N);
@@ -34,21 +55,21 @@ int main() {
   auto d_y = cuda::makeUnique<float[]>(N);
   auto d_z = cuda::makeShared<float[]>(N);
 
-  auto stream = cuda::Stream{cudaStreamNonBlocking};
+  cuda::Stream stream{cudaStreamNonBlocking};
 
-  auto graph = cuda::Graph{};
+  cuda::Graph graph{};
   cudaKernelNodeParams kernelNodeParams;
-  int n;
+  int n = 1;
   float a;
-  float *xx = reinterpret_cast<float *>(0x235215);
-  float *yy = reinterpret_cast<float *>(0x233567);
+  float *xx = new float{0};
+  float *yy = new float{1};
   int blocks = 10;
   int threads = 10;
   kernelNodeParams.func = reinterpret_cast<void *>(&saxpy);
   kernelNodeParams.gridDim = dim3(blocks, 1, 1);
   kernelNodeParams.blockDim = dim3(threads, 1, 1);
   kernelNodeParams.sharedMemBytes = 0;
-  void* kernelArgs[4] = { &n, &a, xx, yy };
+  void* kernelArgs[4] = { &n, &a, &xx, &yy };
   kernelNodeParams.kernelParams = kernelArgs;
   kernelNodeParams.extra = nullptr;
   auto kernelNode = graph.createKernelNode(kernelNodeParams);
