@@ -12,11 +12,11 @@ namespace cuda {
 Graph::GraphNode::GraphNode(const this_is_private &,
                             cudaGraph_t graph,
                             Graph& graph_) {
-  throwIfCudaError(cudaGraphAddChildGraphNode(&graph_node_, graph, nullptr, 0, graph_.graph_));
+  throwIfCudaError(cudaGraphAddChildGraphNode(&handle_, graph, nullptr, 0, handleFrom(graph_)));
 }
 
 Graph::GraphNode::~GraphNode() {
-  cudaGraphDestroyNode(graph_node_);
+  cudaGraphDestroyNode(handle_);
 }
 
 }

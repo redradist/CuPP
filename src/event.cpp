@@ -9,37 +9,37 @@
 namespace cuda {
 
 Event::Event() {
-  throwIfCudaError(cudaEventCreate(&event_));
+  throwIfCudaError(cudaEventCreate(&handle_));
 }
 
 Event::Event(unsigned int flags) {
-  throwIfCudaError(cudaEventCreateWithFlags(&event_, flags));
+  throwIfCudaError(cudaEventCreateWithFlags(&handle_, flags));
 }
 
 Event::~Event() {
-  cudaEventDestroy(event_);
+  cudaEventDestroy(handle_);
 }
 
 void Event::query() {
-  throwIfCudaError(cudaEventQuery(event_));
+  throwIfCudaError(cudaEventQuery(handle_));
 }
 
 void Event::record() {
-  throwIfCudaError(cudaEventRecord(event_));
+  throwIfCudaError(cudaEventRecord(handle_));
 }
 
 void Event::record(Stream& stream) {
-  throwIfCudaError(cudaEventRecord(event_, stream.stream_));
+  throwIfCudaError(cudaEventRecord(handle_, handleFrom(stream)));
 }
 
 float Event::elapsedTime(Event& start, Event& end) {
   float ms;
-  throwIfCudaError(cudaEventElapsedTime(&ms, start.event_, end.event_));
+  throwIfCudaError(cudaEventElapsedTime(&ms, start.handle_, end.handle_));
   return ms;
 }
 
 void Event::synchronize() {
-  throwIfCudaError(cudaEventSynchronize(event_));
+  throwIfCudaError(cudaEventSynchronize(handle_));
 }
 
 }

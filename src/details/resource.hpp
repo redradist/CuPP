@@ -13,38 +13,36 @@ class Resource {
   template <typename TExternalResource>
   friend class Resource;
 
- protected:
-  TResource& handle();
-  const TResource& handle() const;
+  Resource() = default;
+  Resource(const Resource&) = delete;
+  Resource& operator=(const Resource&) = delete;
+  Resource(Resource&&) = delete;
+  Resource& operator=(Resource&&) = delete;
 
+  template<typename ... TArgs>
+  void call(cudaError_t(*cudaFunction)(TArgs...), TArgs&&... args) {
+    throwIfCudaError(cudaFunction(this->handle_, std::forward<TArgs>(args)...));
+  }
+
+ protected:
   template <typename TExternalResource>
   static TExternalResource& handleFrom(Resource<TExternalResource>& res);
   template <typename TExternalResource>
   static const TExternalResource& handleFrom(const Resource<TExternalResource>& res);
 
-  TResource resource_;
+  TResource handle_;
 };
-
-template <typename TResource>
-TResource& Resource<TResource>::handle() {
-  return resource_;
-}
-
-template <typename TResource>
-const TResource& Resource<TResource>::handle() const {
-  return resource_;
-}
 
 template <typename TResource>
 template <typename TExternalResource>
 TExternalResource& Resource<TResource>::handleFrom(Resource<TExternalResource>& res) {
-  return res.resource_;
+  return res.handle_;
 }
 
 template <typename TResource>
 template <typename TExternalResource>
 const TExternalResource& Resource<TResource>::handleFrom(const Resource<TExternalResource>& res) {
-  return res.resource_;
+  return res.handle_;
 }
 
 }

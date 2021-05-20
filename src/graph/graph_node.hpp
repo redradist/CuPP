@@ -7,30 +7,18 @@
 
 #include <cuda_runtime.h>
 
-#include "graph.hpp"
+#include <graph.hpp>
+#include <details/resource.hpp>
 
 namespace cuda {
 
-class Graph::Node {
+class Graph::Node : public Resource<cudaGraphNode_t> {
  public:
   virtual ~Node() = 0;
-
- protected:
-  friend class Graph;
-
-  cudaGraphNode_t& node();
-
-  cudaGraphNode_t graph_node_;
 };
 
 inline
 Graph::Node::~Node() {
-}
-
-inline
-cudaGraphNode_t&
-Graph::Node::node() {
-  return graph_node_;
 }
 
 }

@@ -9,9 +9,11 @@
 
 #include <cuda_runtime.h>
 
+#include "details/resource.hpp"
+
 namespace cuda {
 
-class Graph final {
+class Graph final : public Resource<cudaGraph_t> {
  public:
   class Node;
   class HostNode;
@@ -21,37 +23,13 @@ class Graph final {
   explicit Graph(unsigned int flags = 0);
   ~Graph();
 
-  Graph(const Graph&) = delete;
-  Graph& operator=(const Graph&) = delete;
-
-  Graph(Graph&&) = default;
-  Graph& operator=(Graph&&) = default;
-
   std::shared_ptr<HostNode> createHostNode(cudaHostNodeParams& nodeParams);
   std::shared_ptr<KernelNode> createKernelNode(cudaKernelNodeParams& nodeParams);
   std::shared_ptr<GraphNode> createGraphNode(Graph& graph);
 
   void addDependency(std::shared_ptr<Graph::Node>& leftNode,
                      std::shared_ptr<Graph::Node>& rightNode);
-
- private:
-  friend class Stream;
-
-  cudaGraph_t& handle();
-  const cudaGraph_t& handle() const;
-
-  cudaGraph_t graph_;
 };
-
-inline
-cudaGraph_t& Graph::handle() {
-  return graph_;
-}
-
-inline
-const cudaGraph_t& Graph::handle() const {
-  return graph_;
-}
 
 }
 

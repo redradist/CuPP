@@ -10,11 +10,11 @@ namespace cuda {
 Graph::HostNode::HostNode(const this_is_private &,
                           cudaGraph_t graph,
                           cudaHostNodeParams& nodeParams) {
-  throwIfCudaError(cudaGraphAddHostNode(&graph_node_, graph, nullptr, 0, &nodeParams));
+  throwIfCudaError(cudaGraphAddHostNode(&handle_, graph, nullptr, 0, &nodeParams));
 }
 
 Graph::HostNode::~HostNode() {
-  cudaGraphDestroyNode(graph_node_);
+  cudaGraphDestroyNode(handle_);
 }
 
 }

@@ -11,11 +11,11 @@ namespace cuda {
 Graph::KernelNode::KernelNode(const this_is_private &,
                               cudaGraph_t graph,
                               cudaKernelNodeParams& nodeParams) {
-  throwIfCudaError(cudaGraphAddKernelNode(&graph_node_, graph, nullptr, 0, &nodeParams));
+  throwIfCudaError(cudaGraphAddKernelNode(&handle_, graph, nullptr, 0, &nodeParams));
 }
 
 Graph::KernelNode::~KernelNode() {
-  cudaGraphDestroyNode(graph_node_);
+  cudaGraphDestroyNode(handle_);
 }
 
 }

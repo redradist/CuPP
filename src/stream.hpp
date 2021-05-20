@@ -9,7 +9,9 @@
 #include <cuda_runtime.h>
 #include <utility>
 #include <vector>
+
 #include "exceptions/cuda_exception.hpp"
+#include "details/resource.hpp"
 #include "details/unique_ptr.hpp"
 
 namespace cuda {
@@ -35,7 +37,7 @@ enum class StreamCaptureStatus : int {
   StatusInvalidated = 2, /**< Stream is part of a capture sequence that */
 };
 
-class Stream final {
+class Stream final : public Resource<cudaStream_t> {
  public:
   using StreamCallback = std::function<void(Stream& stream, cudaError_t status, void *userData)>;
   using CaptureSequenceId = unsigned long long;
@@ -44,12 +46,6 @@ class Stream final {
   Stream();
   explicit Stream(unsigned int flags);
   Stream(unsigned int flags, int priority);
-
-  Stream(const Stream&) = delete;
-  Stream& operator=(const Stream&) = delete;
-
-  Stream(Stream&&) = default;
-  Stream& operator=(Stream&&) = default;
 
   ~Stream();
 
@@ -72,8 +68,6 @@ class Stream final {
   CaptureFlags getFlags();
 
  private:
-  friend class Event;
-
   struct StreamUserData {
     Stream* stream_;
     StreamCallback callback_;
@@ -88,23 +82,22 @@ class Stream final {
 
   static void onStreamEvent(cudaStream_t stream, cudaError_t status, void *userData);
 
-  cudaStream_t stream_;
   std::vector<std::unique_ptr<StreamUserData>> users_data_;
 };
 
 template <typename TDes, typename TSrc>
 void Stream::memcpyAsync(UniquePtr<TDes>& dest, const std::unique_ptr<TSrc>& src, std::size_t n) {
-  throwIfCudaError(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, stream_));
+  throwIfCudaError(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyHostToDevice, handle_));
 }
 
 template <typename TDes, typename TSrc>
 void Stream::memcpyAsync(std::unique_ptr<TDes>& dest, const UniquePtr<TSrc>& src, std::size_t n) {
-  throwIfCudaError(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, stream_));
+  throwIfCudaError(cudaMemcpyAsync(dest.get(), src.get(), n, cudaMemcpyDeviceToHost, handle_));
 }
 
 template <typename T>
 void Stream::attachMemAsync(T *devPtr, size_t length, MemAttachMode flags) {
-  throwIfCudaError(cudaStreamAttachMemAsync(stream_, devPtr, length, static_cast<unsigned>(flags)));
+  throwIfCudaError(cudaStreamAttachMemAsync(handle_, devPtr, length, static_cast<unsigned>(flags)));
 }
 
 }
