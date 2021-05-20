@@ -20,12 +20,6 @@ class Graph::GraphNode : public Graph::Node {
                      Graph& graph_);
   ~GraphNode() override;
 
-  GraphNode(const GraphNode&) = delete;
-  GraphNode& operator=(const GraphNode&) = delete;
-
-  GraphNode(GraphNode&&) = default;
-  GraphNode& operator=(GraphNode&&) = default;
-
  protected:
   friend class Graph;
 

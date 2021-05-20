@@ -20,12 +20,6 @@ class Graph::KernelNode : public Graph::Node {
                       cudaKernelNodeParams& nodeParams);
   ~KernelNode() override;
 
-  KernelNode(const KernelNode&) = delete;
-  KernelNode& operator=(const KernelNode&) = delete;
-
-  KernelNode(KernelNode&&) = default;
-  KernelNode& operator=(KernelNode&&) = default;
-
  protected:
   friend class Graph;
 

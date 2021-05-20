@@ -19,11 +19,12 @@ class Event final : public Resource<cudaEvent_t> {
 
   ~Event();
 
+  static float elapsedTime(Event& start, Event& end);
+
   void query();
   void record();
   void record(Stream& stream);
   void synchronize();
-  static float elapsedTime(Event& start, Event& end);
 };
 
 }

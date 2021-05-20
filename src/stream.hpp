@@ -62,10 +62,10 @@ class Stream final : public Resource<cudaStream_t> {
   void addCallback(const StreamCallback& callback, void *userData, unsigned int flags);
   void query();
   void synchronize();
-  StreamCaptureStatus isCapturing();
-  std::pair<StreamCaptureStatus, CaptureSequenceId>
+  [[nodiscard]]StreamCaptureStatus isCapturing();
+  [[nodiscard]]std::pair<StreamCaptureStatus, CaptureSequenceId>
   getCaptureInfo();
-  CaptureFlags getFlags();
+  [[nodiscard]]CaptureFlags getFlags();
 
  private:
   struct StreamUserData {

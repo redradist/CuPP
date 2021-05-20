@@ -20,12 +20,6 @@ class Graph::HostNode : public Graph::Node {
                     cudaHostNodeParams& nodeParams);
   ~HostNode() override;
 
-  HostNode(const HostNode&) = delete;
-  HostNode& operator=(const HostNode&) = delete;
-
-  HostNode(HostNode&&) = default;
-  HostNode& operator=(HostNode&&) = default;
-
  protected:
   friend class Graph;
 
