@@ -12,7 +12,7 @@ namespace cuda {
 
 class Stream;
 
-class CaptureGraph final : public Resource<cudaGraph_t> {
+class CaptureGraph final : public Handle<cudaGraph_t> {
  public:
   explicit CaptureGraph(Stream& stream);
   ~CaptureGraph();

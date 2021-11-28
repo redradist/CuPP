@@ -38,7 +38,7 @@ enum class StreamCaptureStatus : int {
   StatusInvalidated = 2, /**< Stream is part of a capture sequence that */
 };
 
-class Stream final : public Resource<cudaStream_t> {
+class Stream final : public Handle<cudaStream_t> {
  public:
   using StreamCallback = std::function<void(Stream& stream, cudaError_t status, void *userData)>;
   using CaptureSequenceId = unsigned long long;

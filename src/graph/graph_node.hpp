@@ -12,7 +12,7 @@
 
 namespace cuda {
 
-class Graph::Node : public Resource<cudaGraphNode_t> {
+class Graph::Node : public Handle<cudaGraphNode_t> {
  public:
   virtual ~Node() = 0;
 };

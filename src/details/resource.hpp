@@ -9,28 +9,28 @@
 
 namespace cuda {
 
-template <typename TResource>
-class Resource {
+template <typename THandle>
+class Handle {
  public:
-  template <typename TExternalResource>
-  friend class Resource;
+  template <typename TExternalHandle>
+  friend class Handle;
 
-  Resource() = default;
-  Resource(const Resource&) = delete;
-  Resource& operator=(const Resource&) = delete;
-  Resource(Resource&&) = delete;
-  Resource& operator=(Resource&&) = delete;
+  Handle() = default;
+  Handle(const Handle&) = delete;
+  Handle& operator=(const Handle&) = delete;
+  Handle(Handle&&) = delete;
+  Handle& operator=(Handle&&) = delete;
 
   template<typename ... TArgs>
-  void call(cudaError_t(*cudaFunction)(TResource, TArgs...), TArgs&&... args);
+  void call(cudaError_t(*cudaFunction)(THandle, TArgs...), TArgs&&... args);
 
  protected:
-  template <typename TExternalResource>
-  static TExternalResource& handleFrom(Resource<TExternalResource>& res);
-  template <typename TExternalResource>
-  static const TExternalResource& handleFrom(const Resource<TExternalResource>& res);
+  template <typename TExternalHandle>
+  static TExternalHandle& handleFrom(Handle<TExternalHandle>& res);
+  template <typename TExternalHandle>
+  static const TExternalHandle& handleFrom(const Handle<TExternalHandle>& res);
 
-  TResource handle_;
+  THandle handle_;
 };
 
 template<typename Arg>
@@ -51,21 +51,21 @@ inline TArg& tryHandleFrom(TArg&& res) {
 
 }
 
-template <typename TResource>
-template <typename TExternalResource>
-TExternalResource& Resource<TResource>::handleFrom(Resource<TExternalResource>& res) {
+template <typename THandle>
+template <typename TExternalHandle>
+TExternalHandle& Handle<THandle>::handleFrom(Handle<TExternalHandle>& res) {
   return res.handle_;
 }
 
-template <typename TResource>
-template <typename TExternalResource>
-const TExternalResource& Resource<TResource>::handleFrom(const Resource<TExternalResource>& res) {
+template <typename THandle>
+template <typename TExternalHandle>
+const TExternalHandle& Handle<THandle>::handleFrom(const Handle<TExternalHandle>& res) {
   return res.handle_;
 }
 
-template<typename TResource>
+template<typename THandle>
 template<typename ... TArgs>
-void Resource<TResource>::call(cudaError_t(*cudaFunction)(TResource, TArgs...), TArgs&&... args) {
+void Handle<THandle>::call(cudaError_t(*cudaFunction)(THandle, TArgs...), TArgs&&... args) {
   throwIfCudaError(cudaFunction(this->handle_, tryHandleFrom<TArgs>(args)...));
 }
 

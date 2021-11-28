@@ -13,7 +13,7 @@
 
 namespace cuda {
 
-class Graph final : public Resource<cudaGraph_t> {
+class Graph final : public Handle<cudaGraph_t> {
  public:
   class Node;
   class HostNode;

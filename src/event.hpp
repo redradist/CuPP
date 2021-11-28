@@ -12,7 +12,7 @@ namespace cuda {
 
 class Stream;
 
-class Event final : public Resource<cudaEvent_t> {
+class Event final : public Handle<cudaEvent_t> {
  public:
   Event();
   explicit Event(unsigned int flags);
