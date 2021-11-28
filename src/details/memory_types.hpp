@@ -2,8 +2,8 @@
 // Created by redra on 22.04.21.
 //
 
-#ifndef CUDAPP_MEMORY_TYPES_HPP
-#define CUDAPP_MEMORY_TYPES_HPP
+#ifndef CUPP_MEMORY_TYPES_HPP
+#define CUPP_MEMORY_TYPES_HPP
 
 #include <memory>
 #include <type_traits>
@@ -32,4 +32,4 @@ struct CudaDeleter {
 
 }
 
-#endif //CUDAPP_MEMORY_TYPES_HPP
+#endif //CUPP_MEMORY_TYPES_HPP

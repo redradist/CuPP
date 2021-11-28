@@ -2,24 +2,25 @@
 // Created by redra on 12.04.21.
 //
 
-#ifndef CUDAPP_CAPTUREGRAPH_HPP
-#define CUDAPP_CAPTUREGRAPH_HPP
+#ifndef CUPP_CAPTUREGRAPH_HPP
+#define CUPP_CAPTUREGRAPH_HPP
+
+#include <utility>
+#include "details/resource.hpp"
 
 namespace cuda {
 
-class CaptureGraph {
+class Stream;
+
+class CaptureGraph final : public Resource<cudaGraph_t> {
  public:
-  void capture() {
-  }
+  explicit CaptureGraph(Stream& stream);
+  ~CaptureGraph();
 
-  void run() {
+  void launch();
 
-  }
-
- private:
-  cudaGraph_t graph_;
 };
 
 }
 
-#endif //CUDAPP_CAPTUREGRAPH_HPP
+#endif //CUPP_CAPTUREGRAPH_HPP

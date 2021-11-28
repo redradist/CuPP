@@ -2,8 +2,8 @@
 // Created by redra on 25.04.21.
 //
 
-#ifndef CUDAPP_SRC_GRAPH_KERNEL_NODE_HPP_
-#define CUDAPP_SRC_GRAPH_KERNEL_NODE_HPP_
+#ifndef CUPP_SRC_GRAPH_KERNEL_NODE_HPP_
+#define CUPP_SRC_GRAPH_KERNEL_NODE_HPP_
 
 #include "graph.hpp"
 #include "graph_node.hpp"
@@ -30,4 +30,4 @@ class Graph::KernelNode : public Graph::Node {
 
 }
 
-#endif //CUDAPP_SRC_GRAPH_KERNEL_NODE_HPP_
+#endif //CUPP_SRC_GRAPH_KERNEL_NODE_HPP_

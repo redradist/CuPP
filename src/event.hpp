@@ -2,8 +2,8 @@
 // Created by redra on 21.04.21.
 //
 
-#ifndef CUDAPP_EVENT_HPP
-#define CUDAPP_EVENT_HPP
+#ifndef CUPP_EVENT_HPP
+#define CUPP_EVENT_HPP
 
 #include <cuda_runtime.h>
 #include "stream.hpp"
@@ -29,4 +29,4 @@ class Event final : public Resource<cudaEvent_t> {
 
 }
 
-#endif //CUDAPP_EVENT_HPP
+#endif //CUPP_EVENT_HPP

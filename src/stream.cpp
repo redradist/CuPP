@@ -32,6 +32,10 @@ void Stream::endCapture(Graph& graph) {
   throwIfCudaError(cudaStreamEndCapture(handle_, &handleFrom(graph)));
 }
 
+CaptureGraph Stream::endCapture() {
+  return CaptureGraph{*this};
+}
+
 void Stream::waitEvent(Event& event, unsigned int flags) {
   throwIfCudaError(cudaStreamWaitEvent(handle_, handleFrom(event), flags));
 }

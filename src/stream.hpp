@@ -2,8 +2,8 @@
 // Created by redra on 14.04.21.
 //
 
-#ifndef CUDAPP_STREAM_HPP
-#define CUDAPP_STREAM_HPP
+#ifndef CUPP_STREAM_HPP
+#define CUPP_STREAM_HPP
 
 #include <memory>
 #include <cuda_runtime.h>
@@ -13,6 +13,7 @@
 #include "exceptions/cuda_exception.hpp"
 #include "details/resource.hpp"
 #include "details/unique_ptr.hpp"
+#include "capture_graph.hpp"
 
 namespace cuda {
 
@@ -58,6 +59,7 @@ class Stream final : public Resource<cudaStream_t> {
 
   void beginCapture(StreamCaptureMode mode);
   void endCapture(Graph& graph);
+  CaptureGraph endCapture();
   void waitEvent(Event& event, unsigned int flags);
   void addCallback(const StreamCallback& callback, void *userData, unsigned int flags);
   void query();
@@ -102,4 +104,4 @@ void Stream::attachMemAsync(T *devPtr, size_t length, MemAttachMode flags) {
 
 }
 
-#endif //CUDAPP_STREAM_HPP
+#endif //CUPP_STREAM_HPP

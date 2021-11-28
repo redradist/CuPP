@@ -2,8 +2,8 @@
 // Created by redra on 22.04.21.
 //
 
-#ifndef CUDAPP_CUDA_EXCEPTION_HPP
-#define CUDAPP_CUDA_EXCEPTION_HPP
+#ifndef CUPP_CUDA_EXCEPTION_HPP
+#define CUPP_CUDA_EXCEPTION_HPP
 
 #include <stdexcept>
 #include <string>
@@ -35,4 +35,4 @@ inline constexpr void throwIfCudaError(cudaError_t err) {
 
 }
 
-#endif //CUDAPP_CUDA_EXCEPTION_HPP
+#endif //CUPP_CUDA_EXCEPTION_HPP
